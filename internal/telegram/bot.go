@@ -18,19 +18,20 @@ func NewBot(bot *tgbotapi.BotAPI) *Bot {
 func (b Bot) Start() {
 	log.Printf("Authorized on account %s", b.bot.Self.UserName)
 
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
+	updateConfig := tgbotapi.NewUpdate(0)
+	updateConfig.Timeout = 60
 
-	updates := b.bot.GetUpdatesChan(u)
+	updates := b.bot.GetUpdatesChan(updateConfig)
 
 	for update := range updates {
 		if update.Message != nil { // If we got a message
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-			msg.ReplyToMessageID = update.Message.MessageID
+			if update.Message.IsCommand() {
+				b.HandleCommand(update.Message)
+				continue
+			}
 
-			b.bot.Send(msg)
+			b.HandleMessage(update.Message)
 		}
 	}
 }

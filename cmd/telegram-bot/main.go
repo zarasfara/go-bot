@@ -13,8 +13,8 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
-
 	bot.Debug = true
+
 	telegramBot := telegram.NewBot(bot)
 
 	telegramBot.Start()
