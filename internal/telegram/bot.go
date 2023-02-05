@@ -5,6 +5,14 @@ import (
 	"log"
 )
 
+var numericKeyboard = tgbotapi.NewReplyKeyboard(
+	tgbotapi.NewKeyboardButtonRow(
+		tgbotapi.NewKeyboardButton("Случайное изображение"),
+		tgbotapi.NewKeyboardButton("2"),
+		tgbotapi.NewKeyboardButton("3"),
+	),
+)
+
 type Bot struct {
 	bot *tgbotapi.BotAPI
 }
