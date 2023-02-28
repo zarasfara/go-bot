@@ -3,7 +3,7 @@ package main
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/zarasfara/telegram-bot-api/internal/telegram"
+	"github.com/zarasfara/telegram-bot-api/pkg/telegram"
 	"log"
 	"os"
 )
