@@ -8,11 +8,13 @@ import (
 	"net/http"
 )
 
+// команды
 const (
 	commandStart      = "start"
 	commandGetPicture = "getpicture"
 )
 
+// обработка команды
 func (b Bot) HandleCommand(message *tgbotapi.Message) {
 	var msg tgbotapi.MessageConfig
 
@@ -21,7 +23,7 @@ func (b Bot) HandleCommand(message *tgbotapi.Message) {
 	case commandStart:
 		msg = tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf("Привет, %s", message.Chat.FirstName))
 	case commandGetPicture:
-		body, err := b.HandleImage()
+		body, err := b.GetImage()
 		if err != nil {
 			log.Fatalf("[%s] %s", message.From.UserName, err)
 		}
@@ -37,6 +39,7 @@ func (b Bot) HandleCommand(message *tgbotapi.Message) {
 	}
 }
 
+// обработка сообщения
 func (b Bot) HandleMessage(message *tgbotapi.Message) {
 	log.Printf("[%s] %s", message.From.UserName, message.Text)
 
@@ -47,7 +50,8 @@ func (b Bot) HandleMessage(message *tgbotapi.Message) {
 	}
 }
 
-func (b Bot) HandleImage() ([]byte, error) {
+// получение изображений
+func (b Bot) GetImage() ([]byte, error) {
 	resp, err := http.Get("https://jsonplaceholder.typicode.com/todos/1")
 	if err != nil {
 		log.Fatalln(err)
