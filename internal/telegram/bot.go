@@ -25,13 +25,16 @@ func (b Bot) Start() {
 
 	for update := range updates {
 		if update.Message != nil { // If we got a message
-
 			if update.Message.IsCommand() {
-				b.HandleCommand(update.Message)
+				if err := b.HandleCommand(update.Message); err != nil {
+					b.handleError(update.Message.Chat.ID, err)
+				}
 				continue
 			}
 
-			b.HandleMessage(update.Message)
+			if err := b.HandleMessage(update.Message); err != nil {
+				b.handleError(update.Message.Chat.ID, err)
+			}
 		}
 	}
 }
