@@ -1,14 +1,19 @@
 package telegram
 
 import (
+	"encoding/json"
 	"fmt"
-	"io"
+	_ "io"
 	"log"
 	"net/http"
 	"os"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
+
+type CatImage struct {
+	URL string `json:"url"`
+}
 
 // команды
 const (
@@ -18,7 +23,7 @@ const (
 
 // обработка команды
 func (b Bot) HandleCommand(message *tgbotapi.Message) error {
-	var msg tgbotapi.MessageConfig
+	var msg tgbotapi.Chattable
 
 	// сообщение - команда
 	switch message.Command() {
@@ -30,7 +35,9 @@ func (b Bot) HandleCommand(message *tgbotapi.Message) error {
 			return err
 			// log.Fatalf("[%s] %s", message.From.UserName, err)
 		}
-		msg = tgbotapi.NewMessage(message.Chat.ID, string(body))
+
+		fileUrl := tgbotapi.FileURL(body)
+		msg = tgbotapi.NewPhoto(message.Chat.ID, fileUrl)
 
 	default:
 		msg = tgbotapi.NewMessage(message.Chat.ID, "Я такой команды не знаю :[")
@@ -57,8 +64,7 @@ func (b Bot) HandleMessage(message *tgbotapi.Message) error {
 }
 
 // получение изображений
-func (b Bot) getImage() ([]byte, error) {
-
+func (b Bot) getImage() (string, error) {
 	url := "https://api.thecatapi.com/v1/images/search"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -75,14 +81,11 @@ func (b Bot) getImage() ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	body, _ := io.ReadAll(resp.Body)
+	var catImages []CatImage
+	err = json.NewDecoder(resp.Body).Decode(&catImages)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
-	fmt.Println()
-	return body, err
-
+	return catImages[0].URL, err
 }
-
-
