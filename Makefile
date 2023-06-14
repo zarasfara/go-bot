@@ -1,11 +1,12 @@
 ## build: Билд проекта
 build: 
-	go build -o .bin/ cmd/telegram-bot/main.go
+	go build -o .bin/ cmd/main.go
 
 ## run: Запуск экзешника
 run:
-	./.bin/main
-help: Makefile
+	.bin/main
+
+help:
 	@echo
 	@echo "Доступные команды "$(PROJECTNAME)":"
 	@echo
